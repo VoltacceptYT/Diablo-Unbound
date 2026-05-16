@@ -1,0 +1,31 @@
+name: Build WebAssembly
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Emscripten
+        uses: mymindstorm/setup-emsdk@v14
+        with:
+          version: 3.1.45
+
+      - name: Install Node dependencies (if any)
+        run: npm install   # only if a package.json exists
+
+      - name: Build WASM
+        run: node build.js
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: Devilution-WASM
+          path: |
+            emcc/*.jscc
+            emcc/*.wasm
