@@ -16,9 +16,6 @@ jobs:
         with:
           version: 3.1.45
 
-      - name: Install Node dependencies (if any)
-        run: npm install   # only if a package.json exists
-
       - name: Build WASM
         run: node build.js
 
