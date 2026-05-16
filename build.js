@@ -155,6 +155,6 @@ async function run_build(flags, oname, dirs) {
   fs.renameSync(oname + '.js', oname + '.jscc');
 }
 
-//run_build('-O3 -g -DZ_SOLO', 'Diablo', ['Source']).catch(e => console.error(e.message));
+run_build('-O3 -g -DZ_SOLO', 'Diablo', ['Source']).catch(e => console.error(e.message));
 //run_build('-O3 -g -DZ_SOLO -DSPAWN', 'DiabloSpawn', ['Source']).catch(e => console.error(e.message));
-run_build('-O3 -g -DZ_SOLO', 'MpqCmp', ['Source/rmpq', 'Source/zlib', 'mpqcmp']).catch(e => console.error(e.message));
+//run_build('-O3 -g -DZ_SOLO', 'MpqCmp', ['Source/rmpq', 'Source/zlib', 'mpqcmp']).catch(e => console.error(e.message));
