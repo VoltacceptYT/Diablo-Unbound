@@ -22,7 +22,7 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{18DEBFEE-847E-415A-815C-B692AF276104}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>DiabloWeb</RootNamespace>
+    <RootNamespace>DiabloUnbound</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -386,7 +386,7 @@
     <None Include="Source\asm_trans_rect.inc" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="DiabloWeb.rc" />
+    <ResourceCompile Include="DiabloUnbound.rc" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Diablo.ico" />

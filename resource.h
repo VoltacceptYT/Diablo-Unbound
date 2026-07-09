@@ -1,6 +1,6 @@
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
-// Used by DiabloWeb.rc
+// Used by DiabloUnbound.rc
 //
 #define IDI_ICON1                       102
 

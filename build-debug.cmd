@@ -1,17 +1,17 @@
 @echo off
 REM ============================================================
 REM build-debug.cmd
-REM Builds the Diablo: Unbound desktop game (DiabloWeb.vcxproj)
+REM Builds the Diablo: Unbound desktop game (DiabloUnbound.vcxproj)
 REM in Debug|x64 configuration.
 REM
 REM Run this from the root of the extracted Diablo-Unbound project
-REM (the folder containing DiabloWeb.sln / DiabloWeb.vcxproj).
+REM (the folder containing DiabloUnbound.sln / DiabloUnbound.vcxproj).
 REM ============================================================
 
 setlocal enabledelayedexpansion
 cd /d "%~dp0"
 
-set "PROJECT=DiabloWeb.vcxproj"
+set "PROJECT=DiabloUnbound.vcxproj"
 set "CONFIG=Debug"
 set "PLATFORM=Win32"
 

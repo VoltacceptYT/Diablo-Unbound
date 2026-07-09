@@ -735,7 +735,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="DiabloWeb.rc">
+    <ResourceCompile Include="DiabloUnbound.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>

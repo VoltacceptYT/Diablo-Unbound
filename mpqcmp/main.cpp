@@ -607,7 +607,7 @@ std::vector<T> readTable(size_t offset, size_t size, const char* key) {
 }
 
 int main() {
-  __input = File("C:\\Projects\\diabloweb\\run\\DIABDAT0.MPQ", "rb");
+  __input = File("C:\\Projects\\diablo-unbound\\run\\DIABDAT0.MPQ", "rb");
 
   mpq::MPQHeader header;
   if (__input.read(&header, mpq::MPQHeader::size_v1) != mpq::MPQHeader::size_v1 || header.id != mpq::MPQHeader::signature) {
@@ -646,7 +646,7 @@ int main() {
   }
 
   std::vector<mpq::MPQBlockEntry> resBlocks;
-  File result("C:\\Projects\\diabloweb\\run\\DIABDAT1.MPQ", "wb");
+  File result("C:\\Projects\\diablo-unbound\\run\\DIABDAT1.MPQ", "wb");
   size_t hashPos = mpq::MPQHeader::size_v1;
   size_t blockPos = hashPos + hashTable.size() * sizeof(mpq::MPQHashEntry);
   size_t filePos = blockPos + blockTable.size() * sizeof(mpq::MPQBlockEntry);

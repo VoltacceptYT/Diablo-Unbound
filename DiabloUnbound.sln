@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.705
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DiabloWeb", "DiabloWeb.vcxproj", "{18DEBFEE-847E-415A-815C-B692AF276104}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DiabloUnbound", "DiabloUnbound.vcxproj", "{18DEBFEE-847E-415A-815C-B692AF276104}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Server", "Server.vcxproj", "{7A9567DE-9C44-4627-9F13-EF8183101D7B}"
 EndProject
