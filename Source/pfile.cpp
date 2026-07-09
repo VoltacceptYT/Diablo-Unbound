@@ -5,6 +5,7 @@
 #include "rmpq/file.h"
 #include "trace.h"
 #include "pfile_ex.h"
+#include "stash.h"
 
 #ifndef SPAWN
 #define PASSWORD_SINGLE "xrgyrkj1"
@@ -368,6 +369,8 @@ BOOL  pfile_get_file_name(DWORD lvl, char *dst)
 			fmt = "game";
 		else if (lvl == 35)
 			fmt = "hero";
+		else if (lvl == 36)
+			fmt = "stash";
 		else
 			return FALSE;
 	}
@@ -391,21 +394,23 @@ BOOL  pfile_delete_save(_uiheroinfo *hero_info)
 
 void pfile_read_player_from_save()
 {
-	HANDLE archive;
-	DWORD save_num;
-	PkPlayerStruct pkplr;
+    HANDLE archive;
+    DWORD save_num;
+    PkPlayerStruct pkplr;
 
-	save_num = pfile_get_save_num_from_name(gszHero);
-  api_current_save_id(save_num);
-  archive = pfile_open_save_archive(NULL, save_num);
-  if (archive == NULL)
-		app_fatal("Unable to open archive");
-	if (!pfile_read_hero(archive, &pkplr))
-		app_fatal("Unable to load character");
+    save_num = pfile_get_save_num_from_name(gszHero);
+    api_current_save_id(save_num);
+    archive = pfile_open_save_archive(NULL, save_num);
+    if (archive == NULL)
+        app_fatal("Unable to open archive");
+    if (!pfile_read_hero(archive, &pkplr))
+        app_fatal("Unable to load character");
 
-  UnPackPlayer(&pkplr, myplr, FALSE);
-  gbValidSaveFile = pfile_archive_contains_game(archive, save_num);
-	pfile_SFileCloseArchive(archive);
+    UnPackPlayer(&pkplr, myplr, FALSE);
+    gbValidSaveFile = pfile_archive_contains_game(archive, save_num);
+    if (!pfile_read_stash(archive))
+        memset(&Stash, 0, sizeof(Stash));
+    pfile_SFileCloseArchive(archive);
 }
 
 void GetTempLevelNames(char *szTemp)
@@ -584,6 +589,66 @@ BYTE *pfile_read(const char *pszName, DWORD *pdwLen)
 		}
 	}
 	return buf;
+}
+
+void pfile_write_stash()
+{
+    DWORD save_num = pfile_get_save_num_from_name(plr[myplr]._pName);
+    if (!pfile_open_archive(TRUE, save_num))
+        return;
+
+    DWORD raw_len = sizeof(Stash);
+    DWORD enc_len = codec_get_encoded_len(raw_len);
+    BYTE *buf = (BYTE *)DiabloAllocPtr(enc_len);
+    memcpy(buf, &Stash, raw_len);
+    char password[16] = PASSWORD_SINGLE;
+    if (gbMaxPlayers > 1)
+        strcpy(password, PASSWORD_MULTI);
+    codec_encode(buf, raw_len, enc_len, password);
+    mpqapi_write_file("stash", buf, enc_len);
+    mem_free_dbg(buf);
+    pfile_flush(gbMaxPlayers == 1, save_num);
+}
+
+BOOL pfile_read_stash(HANDLE archive)
+{
+    HANDLE file;
+    if (!SFileOpenFileEx(archive, "stash", 0, &file))
+        return FALSE;
+
+    DWORD dwLen = SFileGetFileSize(file, NULL);
+    if (dwLen == 0) { SFileCloseFile(file); return FALSE; }
+
+    BYTE *buf = (BYTE *)DiabloAllocPtr(dwLen);
+    DWORD nread;
+    SFileReadFile(file, buf, dwLen, &nread, NULL);
+    SFileCloseFile(file);
+
+    char password[16] = PASSWORD_SINGLE;
+    if (gbMaxPlayers > 1)
+        strcpy(password, PASSWORD_MULTI);
+    DWORD decoded = codec_decode(buf, dwLen, password);
+    BOOL ok = (decoded == sizeof(Stash));
+    if (ok) {
+        memcpy(&Stash, buf, sizeof(Stash));
+        // Clamp loaded values to prevent OOB on corrupt data.
+        if (Stash.page < 0 || Stash.page >= NUM_STASH_PAGES)
+            Stash.page = 0;
+        if (Stash.stashListCount < 0 || Stash.stashListCount > STASH_MAX_ITEMS)
+            Stash.stashListCount = 0;
+        for (int p = 0; p < NUM_STASH_PAGES; p++) {
+            for (int r = 0; r < STASH_GRID_SIZE; r++) {
+                for (int c = 0; c < STASH_GRID_SIZE; c++) {
+                    int cell = Stash.stashGrid[p][r][c];
+                    int abs_cell = cell > 0 ? cell : -cell;
+                    if (abs_cell > Stash.stashListCount)
+                        Stash.stashGrid[p][r][c] = 0;
+                }
+            }
+        }
+    }
+    mem_free_dbg(buf);
+    return ok;
 }
 
 void pfile_update(BOOL force_save)

@@ -25,3 +25,4 @@ Diablo: Unbound is a project that is based off of Devilution by Diasurgical and 
 - Faster movement speed (Town)
 - LAN Multiplayer
 - Custom MPQ (`unbound.mpq`)
+- Player Stash

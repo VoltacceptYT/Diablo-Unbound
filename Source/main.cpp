@@ -108,6 +108,7 @@ void DApi_Init(unsigned int time, int offscreen, int v0, int v1, int v2) {
   BlackPalette();
   snd_init();
   init_archives();
+  InitStash();
   sound_init();
   UiInitialize(effects_play_sound);
   gbActive = 1;
@@ -243,6 +244,7 @@ int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
   }
 
 	music_stop();
+  FreeStashGFX();
   if (unbound_mpq) {
     SFileCloseArchive(unbound_mpq);
     unbound_mpq = NULL;

@@ -9,6 +9,8 @@ REM Run this from the root of the extracted Diablo-Unbound project
 REM (the folder containing DiabloUnbound.sln / DiabloUnbound.vcxproj).
 REM ============================================================
 
+cls
+
 setlocal enabledelayedexpansion
 cd /d "%~dp0"
 

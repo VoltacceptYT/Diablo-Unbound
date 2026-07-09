@@ -285,6 +285,10 @@ void CheckCursMove()
 	if (sbookflag && MouseX > 320) {
 		return;
 	}
+	if (stashflag && MouseX < 320) {
+		pcurstashitem = CheckStashHLight(MouseX, MouseY);
+		return;
+	}
 	if ((chrflag || questlog) && MouseX < 320) {
 		return;
 	}

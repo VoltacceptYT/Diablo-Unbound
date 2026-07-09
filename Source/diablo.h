@@ -73,6 +73,7 @@
 #include "trigs.h"
 #include "wave.h"
 #include "render.h" // linked last, likely .s/.asm
+#include "stash.h"
 
 extern HWND ghMainWnd;
 extern int glMid1Seed[NUMLEVELS];

@@ -1417,6 +1417,7 @@ void S_StartBarMaid()
 	AddSText(0, 2, 1, "Gillian", COL_GOLD, 0);
 	AddSText(0, 9, 1, "Would you like to:", COL_GOLD, 0);
 	AddSText(0, 12, 1, "Talk to Gillian", COL_BLUE, 1);
+	AddSText(0, 15, 1, "Open the stash", COL_WHITE, 1);
 	AddSText(0, 18, 1, "Say goodbye", COL_WHITE, 1);
 	AddSLine(5);
 	storenumh = 20;
@@ -2635,19 +2636,25 @@ void S_TavernEnter()
 
 void S_BarmaidEnter()
 {
-	switch (stextsel) {
-	case 12:
-		stextlhold = 12;
-		talker = 7;
-		stextshold = STORE_BARMAID;
-		gossipstart = QUEST_GILLIAN2;
-		gossipend = QUEST_GILLIAN10;
-		StartStore(STORE_GOSSIP);
-		break;
-	case 18:
-		stextflag = STORE_NONE;
-		break;
-	}
+    switch (stextsel) {
+    case 12:
+        stextlhold = 12;
+        talker = 7;
+        stextshold = STORE_BARMAID;
+        gossipstart = QUEST_GILLIAN2;
+        gossipend = QUEST_GILLIAN10;
+        StartStore(STORE_GOSSIP);
+        break;
+    case 15:
+        stextflag = STORE_NONE;
+        chrflag = FALSE;
+        questlog = FALSE;
+        stashflag = TRUE;
+        break;
+    case 18:
+        stextflag = STORE_NONE;
+        break;
+    }
 }
 
 void S_DrunkEnter()
