@@ -1,10 +1,10 @@
-/*
 #pragma once
 
 #include <string>
 #include <memory>
 
 #include "base.h"
+#include "embedded_server.hpp"
 
 class websocket_impl;
 
@@ -25,8 +25,8 @@ private:
   uint32_t cookie_;
   bool closed_ = false;
   std::unique_ptr<websocket_impl> impl_;
+  std::unique_ptr<EmbeddedServer> server_; // non-null only when this client is the host
   void handle_packet(const uint8_t* data, size_t size);
 };
 
 }  // namespace net
-*/

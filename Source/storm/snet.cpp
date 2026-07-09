@@ -79,10 +79,9 @@ BOOL SNet_HasMultiplayer() {
 void SNet_InitializeProvider(BOOL multiplayer) {
   if (multiplayer) {
     if (!dvlnet_inst_multi) {
-      ERROR_MSG("multiplayer not initialized");
-    } else {
-      dvlnet_inst = dvlnet_inst_multi;
+      SNet_InitWebsocket();
     }
+    dvlnet_inst = dvlnet_inst_multi;
   } else {
     dvlnet_inst = dvlnet_inst_single;
   }
@@ -123,14 +122,6 @@ void SNet_Poll() {
   dvlnet_inst->poll();
 }
 
-#ifdef EMSCRIPTEN
-#include <emscripten.h>
-extern "C" {
-EMSCRIPTEN_KEEPALIVE
-#endif
 void SNet_InitWebsocket() {
   dvlnet_inst_multi = net::abstract_net::make_net(net::provider_t::WEBSOCKET, "");
 }
-#ifdef EMSCRIPTEN
-}
-#endif

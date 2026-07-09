@@ -24,7 +24,7 @@ void fail(error_code ec, char const* what) {
     return;                \
   }
 
-beast::flat_buffer make_buffer(const packet& p) {
+inline beast::flat_buffer make_buffer(const packet& p) {
   beast::flat_buffer result;
   size_t size = p.size();
   auto dest = result.prepare(size);

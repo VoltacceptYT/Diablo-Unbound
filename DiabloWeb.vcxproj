@@ -193,6 +193,7 @@
     <ClCompile Include="Source\msg.cpp" />
     <ClCompile Include="Source\msgcmd.cpp" />
     <ClCompile Include="Source\multi.cpp" />
+    <ClCompile Include="Source\net\embedded_server.cpp" />
     <ClCompile Include="Source\net\websocket.cpp" />
     <ClCompile Include="Source\nthread.cpp" />
     <ClCompile Include="Source\net\abstract_net.cpp" />
@@ -319,6 +320,7 @@
     <ClInclude Include="Source\net\abstract_net.h" />
     <ClInclude Include="Source\net\base.h" />
     <ClInclude Include="Source\net\loopback.h" />
+    <ClInclude Include="Source\net\embedded_server.hpp" />
     <ClInclude Include="Source\net\websocket.h" />
     <ClInclude Include="Source\net\websocket_browser.hpp" />
     <ClInclude Include="Source\net\websocket_native.hpp" />

@@ -849,12 +849,20 @@ void SetPlrHandGoldCurs(ItemStruct *h)
 }
 
 #define UI_TYRAELS_MIGHT 90
+#define UI_SONNETS_COUNSEL 91
 
 static void GiveStarterTyraelsMight(int p)
 {
 	RecreateItem(MAXITEMS, IDI_TYRAELSMIGHT, 0x0200, UI_TYRAELS_MIGHT, 0);
 	plr[p].InvBody[INVLOC_CHEST] = item[MAXITEMS];
 	plr[p].InvBody[INVLOC_CHEST]._iIdentified = TRUE;
+}
+
+static void GiveStarterSonnetsCounsel(int p)
+{
+	RecreateItem(MAXITEMS, IDI_SONNETSCOUNSEL, 0x0200, UI_SONNETS_COUNSEL, 0);
+	plr[p].InvBody[INVLOC_AMULET] = item[MAXITEMS];
+	plr[p].InvBody[INVLOC_AMULET]._iIdentified = TRUE;
 }
 
 void CreatePlrItems(int p)
@@ -929,6 +937,7 @@ void CreatePlrItems(int p)
 	}
 
 	GiveStarterTyraelsMight(p);
+	GiveStarterSonnetsCounsel(p);
 
 	SetPlrHandItem(&plr[p].HoldItem, IDI_GOLD);
 	GetPlrHandSeed(&plr[p].HoldItem);

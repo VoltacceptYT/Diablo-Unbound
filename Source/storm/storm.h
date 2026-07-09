@@ -195,6 +195,7 @@ BOOL SNetGetTurnsInTransit(int *turns);
 BOOL SNetGetGameInfo(int type, void *dst, unsigned int length, unsigned int *byteswritten);
 
 BOOL SNet_HasMultiplayer();
+void SNet_InitWebsocket();
 void SNet_InitializeProvider(BOOL multiplayer);
 void SNet_CreateGame(const char* name, const char* password, uint32_t difficulty);
 void SNet_JoinGame(const char* name, const char* password);

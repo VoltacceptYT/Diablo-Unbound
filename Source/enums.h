@@ -2511,6 +2511,7 @@ typedef enum _item_indexes {
 	IDI_LAZSTAFF   = 0x21,
 	IDI_RESURRECT    = 0x22,
 	IDI_TYRAELSMIGHT = 156,
+	IDI_SONNETSCOUNSEL = 157,
 } _item_indexes;
 
 typedef enum _setlevels {
