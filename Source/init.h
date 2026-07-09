@@ -5,6 +5,7 @@
 extern _SNETVERSIONDATA fileinfo;
 extern int gbActive;
 extern HANDLE diabdat_mpq;
+extern HANDLE unbound_mpq;
 
 /* rdata */
 

@@ -81,6 +81,29 @@ if errorlevel 1 (
     goto :fail
 )
 
+REM --- Determine the toolset version from the VS installation ----------------
+REM Get the product line version (e.g., 17 for VS 2022, 16 for VS 2019)
+set "VS_VERSION="
+for /f "usebackq tokens=*" %%v in (`"!VSWHERE!" -latest -products * -requires Microsoft.Component.MSBuild -property catalog_productLineVersion`) do (
+    set "VS_VERSION=%%v"
+)
+if not defined VS_VERSION (
+    echo [WARN] Could not determine Visual Studio version. Defaulting to v143.
+    set "TOOLSET=v143"
+) else (
+    REM Map major version to toolset name
+    if "!VS_VERSION!"=="17" set "TOOLSET=v143"
+    if "!VS_VERSION!"=="16" set "TOOLSET=v142"
+    if "!VS_VERSION!"=="15" set "TOOLSET=v141"
+    if "!VS_VERSION!"=="14" set "TOOLSET=v140"
+    REM If unknown, default to v143
+    if not defined TOOLSET (
+        echo [WARN] Unknown VS version !VS_VERSION!. Defaulting to v143.
+        set "TOOLSET=v143"
+    )
+)
+echo [INFO] Using toolset: !TOOLSET!
+
 REM --- Find Windows SDK ------------------------------------------------------
 set "SDKROOT="
 for /f "tokens=2,*" %%a in ('reg query "HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows Kits\Installed Roots" /v KitsRoot10 2^>nul ^| findstr /i KitsRoot10') do set "SDKROOT=%%b"
@@ -114,17 +137,10 @@ if defined SDKVER (
 )
 
 echo.
-echo [INFO] Building !PROJECT! (!ENVIRONMENT!^|!PLATFORM!) with the project's native toolset (v140)...
-msbuild "!PROJECT!" /nologo /m /p:Configuration=!ENVIRONMENT! /p:Platform=!PLATFORM! !SDKPROP! /verbosity:minimal
-if not errorlevel 1 goto :build_success
-
-echo.
-echo [WARN] Build failed - likely missing the v140 (VS2015) toolset.
-echo [INFO] Retrying with the installed v143 toolset instead...
-msbuild "!PROJECT!" /nologo /m /p:Configuration=!ENVIRONMENT! /p:Platform=!PLATFORM! /p:PlatformToolset=v143 !SDKPROP! /verbosity:minimal
+echo [INFO] Building !PROJECT! (!ENVIRONMENT!^|!PLATFORM!) with toolset !TOOLSET!...
+msbuild "!PROJECT!" /nologo /m /p:Configuration=!ENVIRONMENT! /p:Platform=!PLATFORM! /p:PlatformToolset=!TOOLSET! !SDKPROP! /verbosity:minimal
 if errorlevel 1 goto :fail
 
-:build_success
 echo.
 echo [SUCCESS] Build complete.
 

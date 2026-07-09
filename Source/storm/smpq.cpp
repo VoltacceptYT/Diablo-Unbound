@@ -42,6 +42,16 @@ LONG  SFileGetFileSize(HANDLE hFile, LPDWORD lpFileSizeHigh) {
 }
 
 BOOL  SFileOpenFile(const char *filename, HANDLE *phFile) {
+  // Check the custom override archive first so that any file present in
+  // unbound.mpq shadows the corresponding entry in diabdat.mpq.
+  // Only fall back to the base archive when the file is absent from
+  // unbound.mpq; a corrupt entry there is an error, not a silent bypass.
+  if (unbound_mpq) {
+    if (SFileOpenFileEx((HANDLE) unbound_mpq, filename, 0, phFile))
+      return TRUE;
+    if (SErrGetLastError() != ERROR_FILE_NOT_FOUND)
+      return FALSE;
+  }
   return SFileOpenFileEx((HANDLE) diabdat_mpq, filename, 0, phFile);
 }
 
@@ -82,6 +92,15 @@ int  SFileSetFilePointer(HANDLE hFile, int pos, HANDLE, int origin) {
 }
 
 BOOL  SFileGetFileSizeFast(const char* filename, LPDWORD size) {
+  // Check unbound.mpq first so custom replacements report the correct size.
+  if (unbound_mpq) {
+    mpq::Archive* uarc = (mpq::Archive*) unbound_mpq;
+    auto upos = uarc->findFile(filename);
+    if (upos >= 0) {
+      *size = uarc->getFileSize(upos);
+      return TRUE;
+    }
+  }
   mpq::Archive* arc = (mpq::Archive*) diabdat_mpq;
   auto pos = arc->findFile(filename);
   if (pos >= 0) {

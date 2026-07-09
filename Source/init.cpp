@@ -12,6 +12,7 @@
 _SNETVERSIONDATA fileinfo;
 int gbActive;
 HANDLE diabdat_mpq;
+HANDLE unbound_mpq;
 
 uint32_t gdwProductVersion = (1 << 16);
 

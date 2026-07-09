@@ -87,6 +87,12 @@ void init_archives() {
     FileErrDlg("Main program archive: spawn.mpq");
 #endif
   WCloseFile(fh);
+
+  // Load the optional custom content archive. Files found here take
+  // priority over diabdat.mpq, allowing texture replacements without
+  // modifying the base archive. The game continues normally if the
+  // file is absent.
+  unbound_mpq = init_test_access("unbound.mpq");
 }
 
 void DApi_Init(unsigned int time, int offscreen, int v0, int v1, int v2) {
@@ -237,6 +243,10 @@ int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
   }
 
 	music_stop();
+  if (unbound_mpq) {
+    SFileCloseArchive(unbound_mpq);
+    unbound_mpq = NULL;
+  }
   UiDestroy();
   SaveGamma();
   if ( ghMainWnd )
