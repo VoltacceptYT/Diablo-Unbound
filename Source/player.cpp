@@ -38,10 +38,16 @@ int PWVel[3][3] = {
 	{ 2048, 1024, 512 },
 	{ 2048, 1024, 512 }
 };
+// Movement velocities used while running in town. Running is always twice as
+// fast as the normal walk speed and, unlike DevilutionX, cannot be toggled off.
+int PWVelRunTown[3] = { 4096, 2048, 1024 };
 // Total number of frames in walk animation.
 int AnimLenFromClass[3] = {
 	8, 8, 8
 };
+// Number of game ticks it takes to cross one tile while running in town (half
+// of the normal 8 ticks, since running in town is always twice as fast).
+#define ANIM_LEN_RUN_TOWN 4
 int StrengthTbl[3] = { 30, 20, 15 };
 int MagicTbl[3] = { 10, 15, 35 };
 int DexterityTbl[3] = { 20, 30, 15 };
@@ -2083,7 +2089,7 @@ BOOL PM_DoWalk(int pnum)
 		PlaySfxLoc(PS_WALK1, plr[pnum].WorldX, plr[pnum].WorldY);
 	}
 
-	anim_len = 8;
+	anim_len = ANIM_LEN_RUN_TOWN;
 	if (currlevel != 0) {
 		anim_len = AnimLenFromClass[plr[pnum]._pClass];
 	}
@@ -2136,7 +2142,7 @@ BOOL PM_DoWalk2(int pnum)
 		PlaySfxLoc(PS_WALK1, plr[pnum].WorldX, plr[pnum].WorldY);
 	}
 
-	anim_len = 8;
+	anim_len = ANIM_LEN_RUN_TOWN;
 	if (currlevel != 0) {
 		anim_len = AnimLenFromClass[plr[pnum]._pClass];
 	}
@@ -2186,7 +2192,7 @@ BOOL PM_DoWalk3(int pnum)
 		PlaySfxLoc(PS_WALK1, plr[pnum].WorldX, plr[pnum].WorldY);
 	}
 
-	anim_len = 8;
+	anim_len = ANIM_LEN_RUN_TOWN;
 	if (currlevel != 0) {
 		anim_len = AnimLenFromClass[plr[pnum]._pClass];
 	}
@@ -3010,9 +3016,10 @@ void CheckNewPath(int pnum)
 				xvel = PWVel[plr[pnum]._pClass][1];
 				yvel = PWVel[plr[pnum]._pClass][2];
 			} else {
-				xvel3 = 2048;
-				xvel = 1024;
-				yvel = 512;
+				// Always run while in town (no toggle, unlike DevilutionX's "always run" option).
+				xvel3 = PWVelRunTown[0];
+				xvel = PWVelRunTown[1];
+				yvel = PWVelRunTown[2];
 			}
 
 			switch (plr[pnum].walkpath[0]) {
