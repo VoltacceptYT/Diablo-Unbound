@@ -936,8 +936,10 @@ void CreatePlrItems(int p)
 		break;
 	}
 
+#ifdef _DEBUG
 	GiveStarterTyraelsMight(p);
 	GiveStarterSonnetsCounsel(p);
+#endif
 
 	SetPlrHandItem(&plr[p].HoldItem, IDI_GOLD);
 	GetPlrHandSeed(&plr[p].HoldItem);
