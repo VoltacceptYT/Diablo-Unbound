@@ -1,8 +1,9 @@
 @echo off
 REM ============================================================
-REM build-debug.cmd
+REM build.cmd
 REM Builds the Diablo: Unbound desktop game (DiabloUnbound.vcxproj)
-REM in Debug|x64 configuration.
+REM in the configuration specified by build.config.ini
+REM (defaults to Debug|x64 if config missing).
 REM
 REM Run this from the root of the extracted Diablo-Unbound project
 REM (the folder containing DiabloUnbound.sln / DiabloUnbound.vcxproj).
@@ -12,16 +13,42 @@ setlocal enabledelayedexpansion
 cd /d "%~dp0"
 
 set "PROJECT=DiabloUnbound.vcxproj"
-set "CONFIG=Debug"
 set "PLATFORM=Win32"
 
+REM --- Read build.config.ini if present --------------------------------------
+set "CONFIG_FILE=build.config.ini"
+set "ENVIRONMENT=Debug"   REM default
+if exist "!CONFIG_FILE!" (
+    echo [INFO] Reading configuration from !CONFIG_FILE!
+    for /f "usebackq tokens=1,* delims==" %%a in ("!CONFIG_FILE!") do (
+        set "key=%%a"
+        set "value=%%b"
+        REM Strip leading/trailing spaces
+        for /f "tokens=*" %%i in ("!key!") do set "key=%%i"
+        for /f "tokens=*" %%i in ("!value!") do set "value=%%i"
+        if /i "!key!"=="ENVIRONMENT" (
+            set "ENVIRONMENT=!value!"
+        )
+    )
+) else (
+    echo [INFO] No !CONFIG_FILE! found; using default ENVIRONMENT=Debug.
+)
+
+REM Validate ENVIRONMENT
+if /i not "!ENVIRONMENT!"=="Debug" if /i not "!ENVIRONMENT!"=="Release" (
+    echo [ERROR] ENVIRONMENT in !CONFIG_FILE! must be Debug or Release.
+    goto :fail
+)
+echo [INFO] Build configuration: !ENVIRONMENT!
+
+REM --- Verify project file ---------------------------------------------------
 if not exist "!PROJECT!" (
     echo [ERROR] !PROJECT! not found in !cd!
     echo         Run this script from the project root.
     goto :fail
 )
 
-REM --- Locate vswhere (ships with all modern VS/BuildTools installs) ---
+REM --- Locate vswhere --------------------------------------------------------
 set "PF86=%ProgramFiles(x86)%"
 set "PF64=%ProgramFiles%"
 set "VSWHERE=!PF86!\Microsoft Visual Studio\Installer\vswhere.exe"
@@ -31,7 +58,7 @@ if not exist "!VSWHERE!" (
     goto :fail
 )
 
-REM --- Locate an install that has the VC++ tools + MSBuild ---
+REM --- Locate VS instance with MSBuild ---------------------------------------
 set "VSINSTALL="
 for /f "usebackq tokens=*" %%i in (`"!VSWHERE!" -latest -products * -requires Microsoft.Component.MSBuild -property installationPath`) do (
     set "VSINSTALL=%%i"
@@ -54,7 +81,7 @@ if errorlevel 1 (
     goto :fail
 )
 
-REM --- Find the real SDK root via the registry (authoritative source) ---
+REM --- Find Windows SDK ------------------------------------------------------
 set "SDKROOT="
 for /f "tokens=2,*" %%a in ('reg query "HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows Kits\Installed Roots" /v KitsRoot10 2^>nul ^| findstr /i KitsRoot10') do set "SDKROOT=%%b"
 if not defined SDKROOT (
@@ -62,7 +89,6 @@ if not defined SDKROOT (
 )
 if defined SDKROOT if "!SDKROOT:~-1!"=="\" set "SDKROOT=!SDKROOT:~0,-1!"
 
-REM --- Detect installed Windows SDK versions (must have matching Include AND Lib) and pick the highest ---
 set "SDKVER="
 if defined SDKROOT (
     for /f "tokens=*" %%v in ('dir "!SDKROOT!\Include" /b /ad /o-n 2^>nul ^| findstr /r "^10\."') do (
@@ -88,20 +114,43 @@ if defined SDKVER (
 )
 
 echo.
-echo [INFO] Building !PROJECT! (!CONFIG!^|!PLATFORM!) with the project's native toolset (v140)...
-msbuild "!PROJECT!" /nologo /m /p:Configuration=!CONFIG! /p:Platform=!PLATFORM! !SDKPROP! /verbosity:minimal
-if not errorlevel 1 goto :success
+echo [INFO] Building !PROJECT! (!ENVIRONMENT!^|!PLATFORM!) with the project's native toolset (v140)...
+msbuild "!PROJECT!" /nologo /m /p:Configuration=!ENVIRONMENT! /p:Platform=!PLATFORM! !SDKPROP! /verbosity:minimal
+if not errorlevel 1 goto :build_success
 
 echo.
 echo [WARN] Build failed - likely missing the v140 (VS2015) toolset.
 echo [INFO] Retrying with the installed v143 toolset instead...
-msbuild "!PROJECT!" /nologo /m /p:Configuration=!CONFIG! /p:Platform=!PLATFORM! /p:PlatformToolset=v143 !SDKPROP! /verbosity:minimal
+msbuild "!PROJECT!" /nologo /m /p:Configuration=!ENVIRONMENT! /p:Platform=!PLATFORM! /p:PlatformToolset=v143 !SDKPROP! /verbosity:minimal
 if errorlevel 1 goto :fail
 
-:success
+:build_success
 echo.
 echo [SUCCESS] Build complete.
-echo           Output: !cd!\Build\WinDebug\Diablo.exe
+
+REM --- Determine output directory and copy unbound.mpq -----------------------
+set "OUTPUT_DIR=!cd!\Build\Win!ENVIRONMENT!"
+if not exist "!OUTPUT_DIR!" (
+    echo [WARN] Output directory !OUTPUT_DIR! does not exist. Skipping MPQ copy.
+    goto :success_exit
+)
+
+set "MPQ_SOURCE=!cd!\UnboundMPQ\unbound.mpq"
+if exist "!MPQ_SOURCE!" (
+    echo [INFO] Copying unbound.mpq to !OUTPUT_DIR!
+    copy /y "!MPQ_SOURCE!" "!OUTPUT_DIR!\" >nul
+    if errorlevel 1 (
+        echo [WARN] Failed to copy unbound.mpq.
+    ) else (
+        echo [INFO] unbound.mpq copied successfully.
+    )
+) else (
+    echo [WARN] unbound.mpq not found in !cd!\UnboundMPQ\. Skipping copy.
+)
+
+:success_exit
+echo.
+echo           Output: !OUTPUT_DIR!\Diablo.exe
 goto :eof
 
 :fail
