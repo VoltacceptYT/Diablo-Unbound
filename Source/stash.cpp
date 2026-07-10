@@ -40,6 +40,17 @@ int pcursstashitem = -1;
 #define STASH_GRID_ORIGIN_Y (STASH_PANEL_Y + 47) // top edge of row 0
 #define STASH_GRID_PITCH (INV_SLOT_SIZE_PX + 1)  // 29px: 28px slot + 1px gridline
 
+/* The header bar above the grid (the ornate box running the width of the
+ * panel, see stash.cel) doubles as a "gold bank" button: drop a held gold
+ * pile on it to deposit the whole stack into plr._pStashGold, or click it
+ * with an empty cursor to withdraw some amount back onto the cursor. This
+ * lets players bank gold without spending a grid slot on it. Adjust these
+ * if stash.cel positions the header box differently. */
+#define STASH_GOLD_BTN_X (STASH_PANEL_X + 16)
+#define STASH_GOLD_BTN_Y (STASH_PANEL_Y + 8)
+#define STASH_GOLD_BTN_WIDTH 288
+#define STASH_GOLD_BTN_HEIGHT 32
+
 /* buffer-space offsets used when calling the CEL draw primitives, which
  * expect coordinates relative to the render buffer's top-left corner and
  * a bottom-left anchor point for the Y axis (see InvRect's "+64"/"+159"
@@ -109,6 +120,14 @@ void DrawStash()
 	    STASH_PANEL_Y + STASH_PANEL_HEIGHT - 1 + SCREEN_Y,
 	    pStashCels, 1, STASH_PANEL_WIDTH);
 
+	sprintf(tempstr, "%i gold", plr[myplr]._pStashGold);
+	ADD_PlrStringXY(
+	    STASH_GOLD_BTN_X + 40,
+	    STASH_GOLD_BTN_Y + 20,
+	    STASH_GOLD_BTN_X + STASH_GOLD_BTN_WIDTH,
+	    tempstr,
+	    COL_GOLD);
+
 	for (j = 0; j < NUM_STASH_GRID_ELEM; j++) {
 		if (plr[myplr].StashGrid[j] != 0) {
 			InvDrawSlotBack(
@@ -165,6 +184,14 @@ static BOOL FindStashSlot(int mx, int my, int *outSlot)
 		}
 	}
 	return FALSE;
+}
+
+// Hit-test for the stash header's gold bank button - see the geometry
+// comment near STASH_GOLD_BTN_X above.
+BOOL CheckStashGoldButton(int mx, int my)
+{
+	return mx >= STASH_GOLD_BTN_X && mx < STASH_GOLD_BTN_X + STASH_GOLD_BTN_WIDTH
+	    && my >= STASH_GOLD_BTN_Y && my < STASH_GOLD_BTN_Y + STASH_GOLD_BTN_HEIGHT;
 }
 
 void CheckStashPaste(int pnum, int mx, int my)
@@ -390,11 +417,75 @@ void CheckStashCut(int pnum, int mx, int my)
 	}
 }
 
+// Deposits the gold pile currently held on the cursor into the stash gold
+// bank, freeing up whatever grid slot it would otherwise have occupied.
+void StashDepositGold(int pnum)
+{
+	if (plr[pnum].HoldItem._itype != ITYPE_GOLD) {
+		return;
+	}
+
+	if (pnum == myplr) {
+		PlaySFX(ItemInvSnds[ItemCAnimTbl[plr[pnum].HoldItem._iCurs]]);
+	}
+
+	if (plr[pnum]._pStashGold + plr[pnum].HoldItem._ivalue > STASH_GOLD_LIMIT) {
+		plr[pnum]._pStashGold = STASH_GOLD_LIMIT;
+	} else {
+		plr[pnum]._pStashGold += plr[pnum].HoldItem._ivalue;
+	}
+
+	plr[pnum].HoldItem._itype = ITYPE_NONE;
+
+	if (pnum == myplr) {
+		SetCursor_(CURSOR_HAND);
+	}
+}
+
+// Opens the "how much gold do you want to withdraw?" dialog (the same
+// numeric-entry overlay used to split off part of an inventory gold pile),
+// sourced from the stash bank rather than an inventory/belt slot.
+void StashStartGoldWithdraw()
+{
+	if (plr[myplr]._pStashGold <= 0) {
+		return;
+	}
+
+	initialDropGoldIndex = STASH_GOLD_SOURCE;
+	initialDropGoldValue = plr[myplr]._pStashGold;
+	dropGoldIsStashWithdraw = TRUE;
+	dropGoldFlag = TRUE;
+	dropGoldValue = 0;
+	if (talkflag) {
+		control_reset_talk();
+	}
+}
+
 void CheckStashItem()
 {
+	int gx, gy;
+
 	if (pcurs >= CURSOR_FIRSTITEM) {
+		if (plr[myplr].HoldItem._itype == ITYPE_GOLD) {
+			// CheckStashPaste tests slot occupancy using the cursor's
+			// center (mouse position offset by half the held item's
+			// width/height), not the raw mouse position - match that
+			// here or a click that visually lands on the header can
+			// still fall through and get placed in a grid slot instead.
+			SetICursor(plr[myplr].HoldItem._iCurs + CURSOR_FIRSTITEM);
+			gx = MouseX + (icursW >> 1);
+			gy = MouseY + (icursH >> 1);
+			if (CheckStashGoldButton(gx, gy)) {
+				StashDepositGold(myplr);
+				return;
+			}
+		}
 		CheckStashPaste(myplr, MouseX, MouseY);
 	} else {
+		if (CheckStashGoldButton(MouseX, MouseY)) {
+			StashStartGoldWithdraw();
+			return;
+		}
 		CheckStashCut(myplr, MouseX, MouseY);
 	}
 }
@@ -403,6 +494,13 @@ char CheckStashHLight()
 {
 	int r, ii, nGold;
 	ItemStruct *pi;
+
+	if (CheckStashGoldButton(MouseX, MouseY)) {
+		infoclr = COL_WHITE;
+		ClearPanel();
+		sprintf(infostr, "%i gold %s in stash", plr[myplr]._pStashGold, get_pieces_str(plr[myplr]._pStashGold));
+		return -1;
+	}
 
 	if (!FindStashSlot(MouseX, MouseY, &r)) {
 		return -1;

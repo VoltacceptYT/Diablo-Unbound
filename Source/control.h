@@ -6,6 +6,7 @@ extern BYTE *pDurIcons;
 extern BYTE *pChrButtons;
 extern BOOL drawhpflag;
 extern BOOL dropGoldFlag;
+extern BOOL dropGoldIsStashWithdraw;
 extern int panbtn[8];
 extern int chrbtn[4];
 extern BYTE *pMultiBtns;

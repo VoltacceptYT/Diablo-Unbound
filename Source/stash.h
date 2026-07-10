@@ -33,6 +33,13 @@ void OpenStash();
 void CloseStash();
 void ToggleStash();
 
+// Gold banking: lets the player stash/withdraw gold as a single running
+// total (plr._pStashGold) instead of storing gold-pile items on the grid,
+// via a clickable "gold" button in the stash header.
+BOOL CheckStashGoldButton(int mx, int my);
+void StashDepositGold(int pnum);
+void StashStartGoldWithdraw();
+
 /* data */
 
 extern InvXY StashRect[NUM_STASH_GRID_ELEM];

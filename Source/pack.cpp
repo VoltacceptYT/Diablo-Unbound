@@ -82,6 +82,7 @@ void PackPlayer(PkPlayerStruct *pPack, int pnum, BOOL manashield)
 		pPack->StashGrid[i] = pPlayer->StashGrid[i];
 
 	pPack->_pNumStash = pPlayer->_pNumStash;
+	pPack->pStashGold = pPlayer->_pStashGold;
 
 	pPack->pDiabloKillLevel = pPlayer->pDiabloKillLevel;
 
@@ -232,6 +233,7 @@ void UnPackPlayer(PkPlayerStruct *pPack, int pnum, BOOL killok)
 		pPlayer->StashGrid[i] = pPack->StashGrid[i];
 
 	pPlayer->_pNumStash = pPack->_pNumStash;
+	pPlayer->_pStashGold = pPack->pStashGold;
 
 	if (pnum == myplr) {
 		for (i = 0; i < 20; i++)

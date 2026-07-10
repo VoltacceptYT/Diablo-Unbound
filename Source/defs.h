@@ -59,6 +59,15 @@
 #define GOLD_MEDIUM_LIMIT		2500
 #define GOLD_MAX_LIMIT			5000
 
+// Sentinel passed as the gold_index to control_remove_gold() / stored in
+// initialDropGoldIndex to mean "this withdrawal is coming out of the
+// stash gold bank", as opposed to a real InvList/SpdList slot index
+// (which are always >= 7).
+#define STASH_GOLD_SOURCE		(-1)
+// Effectively-unlimited cap on banked stash gold - just large enough to
+// keep the total from ever overflowing a signed int.
+#define STASH_GOLD_LIMIT		2000000000
+
 #define PLR_NAME_LEN			32
 
 #define MAXPATHNODES			300

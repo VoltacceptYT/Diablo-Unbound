@@ -315,6 +315,7 @@ typedef struct PlayerStruct {
 	ItemStruct StashList[NUM_STASH_GRID_ELEM];
 	int _pNumStash;
 	char StashGrid[NUM_STASH_GRID_ELEM];
+	int _pStashGold; // gold banked in the stash - not tied to any grid slot
 	int _pIMinDam;
 	int _pIMaxDam;
 	int _pIAC;
@@ -1404,6 +1405,7 @@ typedef struct PkPlayerStruct {
 	PkItemStruct StashList[NUM_STASH_GRID_ELEM];
 	char StashGrid[NUM_STASH_GRID_ELEM];
 	BYTE _pNumStash;
+	int pStashGold;
 	char pTownWarps;
 	char pDungMsgs;
 	char pLvlLoad;

@@ -8,6 +8,7 @@ BYTE *pDurIcons;
 BYTE *pChrButtons;
 BOOL drawhpflag;
 BOOL dropGoldFlag;
+BOOL dropGoldIsStashWithdraw;
 int panbtn[8];
 int chrbtn[4];
 BYTE *pMultiBtns;
@@ -1187,6 +1188,7 @@ void InitControlPan()
 	pQLogCel = LoadFileInMem("Data\\Quest.CEL", NULL);
 	pGBoxBuff = LoadFileInMem("CtrlPan\\Golddrop.cel", NULL);
 	dropGoldFlag = FALSE;
+	dropGoldIsStashWithdraw = FALSE;
 	dropGoldValue = 0;
 	initialDropGoldValue = 0;
 	initialDropGoldIndex = 0;
@@ -2314,7 +2316,11 @@ void DrawGoldSplit(int amount)
 	ADD_PlrStringXY(366, 87, 600, tempstr, COL_GOLD);
 	sprintf(tempstr, "%s.  How many do", get_pieces_str(initialDropGoldValue));
 	ADD_PlrStringXY(366, 103, 600, tempstr, COL_GOLD);
-	ADD_PlrStringXY(366, 121, 600, "you want to remove?", COL_GOLD);
+	if (dropGoldIsStashWithdraw) {
+		ADD_PlrStringXY(366, 121, 600, "you want to withdraw?", COL_GOLD);
+	} else {
+		ADD_PlrStringXY(366, 121, 600, "you want to remove?", COL_GOLD);
+	}
 	if (amount > 0) {
 		sprintf(tempstr, "%u", amount);
 		PrintGameStr(388, 140, tempstr, 0);
@@ -2348,6 +2354,7 @@ void control_drop_gold(char vkey)
 	} else if (vkey == KeyCode::ESCAPE) {
 		dropGoldFlag = 0;
 		dropGoldValue = 0;
+		dropGoldIsStashWithdraw = FALSE;
 	} else if (vkey == KeyCode::BACK) {
 		input[strlen(input) - 1] = '\0';
 		dropGoldValue = atoi(input);
@@ -2369,7 +2376,9 @@ void control_remove_gold(int pnum, int gold_index)
 {
 	int gi;
 
-	if (gold_index <= 46) {
+	if (gold_index == STASH_GOLD_SOURCE) {
+		plr[pnum]._pStashGold -= dropGoldValue;
+	} else if (gold_index <= 46) {
 		gi = gold_index - 7;
 		plr[pnum].InvList[gi]._ivalue -= dropGoldValue;
 		if (plr[pnum].InvList[gi]._ivalue > 0)
@@ -2389,8 +2398,12 @@ void control_remove_gold(int pnum, int gold_index)
 	plr[pnum].HoldItem._ivalue = dropGoldValue;
 	plr[pnum].HoldItem._iStatFlag = 1;
 	control_set_gold_curs(pnum);
-	plr[pnum]._pGold = CalculateGold(pnum);
+	if (gold_index != STASH_GOLD_SOURCE) {
+		// stash-banked gold isn't part of carried gold, so leave _pGold alone
+		plr[pnum]._pGold = CalculateGold(pnum);
+	}
 	dropGoldValue = 0;
+	dropGoldIsStashWithdraw = FALSE;
 }
 
 void control_set_gold_curs(int pnum)

@@ -2068,6 +2068,7 @@ void StartGoldDrop()
 		initialDropGoldValue = plr[myplr].InvList[pcursinvitem - 7]._ivalue;
 	else
 		initialDropGoldValue = plr[myplr].SpdList[pcursinvitem - 47]._ivalue;
+	dropGoldIsStashWithdraw = FALSE;
 	dropGoldFlag = TRUE;
 	dropGoldValue = 0;
 	if (talkflag)
