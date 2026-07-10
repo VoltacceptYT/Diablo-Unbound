@@ -850,6 +850,7 @@ void SetPlrHandGoldCurs(ItemStruct *h)
 
 #define UI_TYRAELS_MIGHT 90
 #define UI_SONNETS_COUNSEL 91
+#define UI_EYE_OF_LEVIATHAN 92
 
 static void GiveStarterTyraelsMight(int p)
 {
@@ -863,6 +864,13 @@ static void GiveStarterSonnetsCounsel(int p)
 	RecreateItem(MAXITEMS, IDI_SONNETSCOUNSEL, 0x0200, UI_SONNETS_COUNSEL, 0);
 	plr[p].InvBody[INVLOC_AMULET] = item[MAXITEMS];
 	plr[p].InvBody[INVLOC_AMULET]._iIdentified = TRUE;
+}
+
+static void GiveStarterEyeOfTheLeviathan(int p)
+{
+	RecreateItem(MAXITEMS, IDI_EYEOFLEVIATHAN, 0x0200, UI_EYE_OF_LEVIATHAN, 0);
+	plr[p].InvBody[INVLOC_RING_LEFT] = item[MAXITEMS];
+	plr[p].InvBody[INVLOC_RING_LEFT]._iIdentified = TRUE;
 }
 
 void CreatePlrItems(int p)
@@ -939,6 +947,7 @@ void CreatePlrItems(int p)
 #ifdef _DEBUG
 	GiveStarterTyraelsMight(p);
 	GiveStarterSonnetsCounsel(p);
+	GiveStarterEyeOfTheLeviathan(p);
 #endif
 
 	SetPlrHandItem(&plr[p].HoldItem, IDI_GOLD);

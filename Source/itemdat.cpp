@@ -1,6 +1,6 @@
 #include "diablo.h"
 
-ItemDataStruct AllItemsList[159] = {
+ItemDataStruct AllItemsList[160] = {
 	// clang-format off
 	// iRnd,          iClass,        iLoc,             iCurs,                         itype, iItemId,            iName,                         iSName, iMinMLvl, iDurability, iMinDam, iMaxDam, iMinAC, iMaxAC, iMinStr, iMinMag, iMinDex, iFlags,            iMiscId,         iSpell,          iUsable, iValue, iMaxValue
 	{  IDROP_REGULAR, ICLASS_GOLD,   ILOC_UNEQUIPABLE, ICURS_GOLD,                       11, UITYPE_NONE,        "Gold",                        NULL,          1,           0,       0,       0,      0,      0,       0,       0,       0, ISPL_NONE,         IMISC_NONE,      SPL_NULL,        TRUE,         0,         0 },
@@ -161,6 +161,7 @@ ItemDataStruct AllItemsList[159] = {
 	{  IDROP_REGULAR, ICLASS_MISC,   ILOC_AMULET,      ICURS_AMULET,                     13, UITYPE_AMULET,      "Amulet",                      "Amulet",     16,           0,       0,       0,      0,      0,       0,       0,       0, ISPL_NONE,         IMISC_AMULET,    SPL_NULL,        FALSE,     1200,      1200 },
 	{  IDROP_NEVER,   ICLASS_ARMOR,  ILOC_ARMOR,       ICURS_FIELD_PLATE,                 9, UITYPE_FIELDPLATE,  "Tyrael's Might",              NULL,          0,          80,       0,       0,     40,     45,       0,       0,       0, ISPL_NONE,         IMISC_UNIQUE,    SPL_NULL,        FALSE,    50000,     50000 },
 	{  IDROP_NEVER,   ICLASS_MISC,   ILOC_AMULET,      ICURS_AMULET,                     13, UITYPE_AMULET,      "Sonnet's Counsel",            NULL,          0,           0,       0,       0,      0,      0,       0,       0,       0, ISPL_NONE,         IMISC_UNIQUE,    SPL_NULL,        FALSE,    38500,     38500 },
+	{  IDROP_NEVER,   ICLASS_MISC,   ILOC_RING,        ICURS_RING,                       12, UITYPE_RING,        "Eye of the Leviathan",        NULL,          0,           0,       0,       0,      0,      0,       0,       0,       0, ISPL_NONE,         IMISC_UNIQUE,    SPL_NULL,        FALSE,     9500,      9500 },
 	{  IDROP_NEVER,   ICLASS_NONE,   ILOC_INVALID,     ICURS_POTION_OF_FULL_MANA,         0, UITYPE_NONE,        NULL,                          NULL,          0,           0,       0,       0,      0,      0,       0,       0,       0, ISPL_NONE,         IMISC_NONE,      SPL_NULL,        FALSE,        0,         0 }
 	// clang-format on
 };
@@ -357,7 +358,7 @@ const PLStruct PL_Suffix[96] = {
 	// clang-format on
 };
 
-const UItemStruct UniqueItemList[93] = {
+const UItemStruct UniqueItemList[94] = {
 	// clang-format off
 	// UIName,                    UIItemId,     UIMinLvl, UINumPL, UIValue, UIPower1,     UIParam1, UIParam2, UIPower2,      UIParam3, UIParam4, UIPower3,      UIParam5, UIParam6, UIPower4,      UIParam7, UIParam8, UIPower5,      UIParam9, UIParam10, UIPower6, UIParam11, UIParam12
 	{  "The Butcher's Cleaver",   UITYPE_CLEAVER,      1,       3,    3650, IPL_STR,            10,       10, IPL_SETDAM,           4,       24, IPL_SETDUR,          10,       10, IPL_TOHIT,            0,        0, IPL_TOHIT,            0,         0, IPL_TOHIT,        0,         0 },
@@ -452,6 +453,7 @@ const UItemStruct UniqueItemList[93] = {
 	{  "Ring of Engagement",      UITYPE_RING,        11,       5,   12476, IPL_GETHIT,          1,        2, IPL_THORNS,           1,        3, IPL_SETAC,            5,        5, IPL_TARGAC,           4,       12, IPL_INVCURS,         13,         0, IPL_TOHIT,        0,         0 },
 	{  "Tyrael's Might",          UITYPE_FIELDPLATE,  99,       4,   50000, IPL_INDESTRUCTIBLE,   0,        0, IPL_ATTRIBS,         15,       15,IPL_ADDACLIFE,        0,        0, IPL_LIGHT,           35,        35, IPL_TOHIT,            0,         0, IPL_TOHIT,        0,         0 },
 	{  "Sonnet's Counsel",        UITYPE_AMULET,      20,       5,   38500, IPL_MAG,             12,       12, IPL_MANA,            35,       35, IPL_LIGHT,             3,        3, IPL_GETHIT,           6,        6, IPL_FASTRECOVER,      1,         1, IPL_TOHIT,        0,         0 },
+	{  "Eye of the Leviathan",    UITYPE_RING,         8,       5,    9500, IPL_LIGHT_CURSE,     4,        4, IPL_VIT,             20,       20, IPL_MAGICRES,        50,       50, IPL_THORNS,           5,        5, IPL_LIGHTDAM,         1,        10, IPL_INVCURS,     12,         0 },
 	{  "",             UITYPE_INVALID,      0,       0,       0, IPL_TOHIT,           0,        0, IPL_TOHIT,            0,        0, IPL_TOHIT,            0,        0, IPL_TOHIT,            0,        0, IPL_TOHIT,            0,         0, IPL_TOHIT,        0,         0 }
 	// clang-format on
 };

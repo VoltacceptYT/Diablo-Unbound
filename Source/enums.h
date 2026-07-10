@@ -2512,6 +2512,7 @@ typedef enum _item_indexes {
 	IDI_RESURRECT    = 0x22,
 	IDI_TYRAELSMIGHT = 156,
 	IDI_SONNETSCOUNSEL = 157,
+	IDI_EYEOFLEVIATHAN = 158,
 } _item_indexes;
 
 typedef enum _setlevels {

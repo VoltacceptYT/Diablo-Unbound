@@ -14,11 +14,12 @@ Diablo: Unbound is a project that is based off of Devilution by Diasurgical and 
 
 ## Ported Uniques/Set Items
 
-- Tyrael's Might
+- Tyrael's Might (Fieldplate)
 
 ## Custom Uniques/Set Items
 
-- Sonnet's Counsel
+- Sonnet's Counsel (Amulet)
+- Eye of the Leviathan (Ring)
 
 ## QoL Features
 
