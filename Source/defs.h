@@ -39,6 +39,7 @@
 
 // number of inventory grid cells
 #define NUM_INV_GRID_ELEM		40
+#define NUM_STASH_GRID_ELEM	100
 #define INV_SLOT_SIZE_PX		28
 
 // Item indestructible durability

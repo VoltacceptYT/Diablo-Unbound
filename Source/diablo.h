@@ -31,6 +31,7 @@
 #include "init.h"
 #include "interfac.h"
 #include "inv.h"
+#include "stash.h"
 #include "itemdat.h"
 #include "items.h"
 #include "lighting.h"

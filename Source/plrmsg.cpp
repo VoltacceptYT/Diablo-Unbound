@@ -86,7 +86,7 @@ void DrawPlrMsg()
 	DWORD width = 620;
 	_plrmsg *pMsg;
 
-	if (chrflag || questlog) {
+	if (chrflag || questlog || stashflag) {
 		if (invflag || sbookflag)
 			return;
 		x = 394;

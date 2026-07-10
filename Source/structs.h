@@ -312,6 +312,9 @@ typedef struct PlayerStruct {
 	char InvGrid[NUM_INV_GRID_ELEM];
 	ItemStruct SpdList[MAXBELTITEMS];
 	ItemStruct HoldItem;
+	ItemStruct StashList[NUM_STASH_GRID_ELEM];
+	int _pNumStash;
+	char StashGrid[NUM_STASH_GRID_ELEM];
 	int _pIMinDam;
 	int _pIMaxDam;
 	int _pIAC;
@@ -1398,6 +1401,9 @@ typedef struct PkPlayerStruct {
 	char InvGrid[NUM_INV_GRID_ELEM];
 	BYTE _pNumInv;
 	PkItemStruct SpdList[MAXBELTITEMS];
+	PkItemStruct StashList[NUM_STASH_GRID_ELEM];
+	char StashGrid[NUM_STASH_GRID_ELEM];
+	BYTE _pNumStash;
 	char pTownWarps;
 	char pDungMsgs;
 	char pLvlLoad;

@@ -942,7 +942,7 @@ void T_DrawGame(int x, int y)
 	chunks = 10;
 	blocks = 5;
 
-	if (chrflag || questlog) {
+	if (chrflag || questlog || stashflag) {
 		x += 2;
 		y -= 2;
 		sx += 288;
@@ -1139,7 +1139,7 @@ void T_DrawZoom(int x, int y)
 		sy += 16;
 	}
 
-	if (chrflag || questlog) {
+	if (chrflag || questlog || stashflag) {
 		nSrcOff = SCREENXY(112, 159);
 		nDstOff = SCREENXY(320, 350);
 		wdt = (SCREEN_WIDTH - 320) / 2;
@@ -1225,6 +1225,9 @@ void T_DrawView(int StartX, int StartY)
 		DrawInv();
 	} else if (sbookflag) {
 		DrawSpellBook();
+	}
+	if (stashflag) {
+		DrawStash();
 	}
 
 	DrawDurIcon();

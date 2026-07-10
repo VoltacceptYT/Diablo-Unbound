@@ -2028,7 +2028,7 @@ void DrawDurIcon()
 	PlayerStruct *p;
 	int x1, x2, x3, x4;
 
-	if (!chrflag && !questlog || !invflag && !sbookflag) {
+	if (!chrflag && !questlog && !stashflag || !invflag && !sbookflag) {
 		x1 = 656;
 		if (invflag || sbookflag)
 			x1 = 336;

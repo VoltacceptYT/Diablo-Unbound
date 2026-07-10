@@ -2994,7 +2994,7 @@ void DrawUniqueInfo()
 {
 	int uid, y;
 
-	if (!chrflag && !questlog) {
+	if (!chrflag && !questlog && !stashflag) {
 		uid = curruitem._iUid;
 		if (uid < 0 || uid >= 128 || UniqueItemList[uid].UIItemId == UITYPE_INVALID)
 			uid = curruitem._iSeed;

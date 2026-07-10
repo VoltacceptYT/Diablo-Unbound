@@ -216,7 +216,7 @@ void DrawAutomap()
 	if (invflag || sbookflag) {
 		sx -= 160;
 	}
-	if (chrflag || questlog) {
+	if (chrflag || questlog || stashflag) {
 		sx += 160;
 	}
 
@@ -455,7 +455,7 @@ void DrawAutomapPlr()
 
 	if (invflag || sbookflag)
 		x -= 160;
-	if (chrflag || questlog)
+	if (chrflag || questlog || stashflag)
 		x += 160;
 	y -= AMPlayerX;
 

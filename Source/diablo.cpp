@@ -116,6 +116,7 @@ void free_game()
 
 	FreeControlPan();
 	FreeInvGFX();
+	FreeStashGFX();
 	FreeGMenu();
 	FreeQuestText();
 	FreeStoreMem();
@@ -225,6 +226,9 @@ BOOL LeftMouseDown(BOOL bShift)
 							CheckInvItem();
 					} else if (sbookflag && MouseX > 320) {
 						CheckSBook();
+					} else if (stashflag && MouseX < 320) {
+						if (!dropGoldFlag)
+							CheckStashItem();
 					} else if (pcurs >= CURSOR_FIRSTITEM) {
 						if (TryInvPut()) {
 							NetSendCmdPItem(TRUE, CMD_PUTITEM, cursmx, cursmy);
@@ -476,6 +480,7 @@ void PressKey(int vkey)
 			invflag = 0;
 			chrflag = FALSE;
 			sbookflag = FALSE;
+			stashflag = FALSE;
 			spselflag = 0;
 			if (qtextflag && leveltype == DTYPE_TOWN) {
 				qtextflag = FALSE;
@@ -594,6 +599,7 @@ void PressKey(int vkey)
 		invflag = 0;
 		chrflag = FALSE;
 		sbookflag = FALSE;
+		stashflag = FALSE;
 		spselflag = 0;
 		if (qtextflag && leveltype == DTYPE_TOWN) {
 			qtextflag = FALSE;
@@ -656,6 +662,7 @@ void PressChar(int vkey)
 	case 'i':
 		if (!stextflag) {
 			sbookflag = FALSE;
+			stashflag = FALSE;
 			invflag = invflag == 0;
 			if (!invflag || chrflag) {
 				if (MouseX < 480 && MouseY < PANEL_TOP) {
@@ -672,6 +679,7 @@ void PressChar(int vkey)
 	case 'c':
 		if (!stextflag) {
 			questlog = FALSE;
+			stashflag = FALSE;
 			chrflag = !chrflag;
 			if (!chrflag || invflag) {
 				if (MouseX > 160 && MouseY < PANEL_TOP) {
@@ -688,6 +696,7 @@ void PressChar(int vkey)
 	case 'q':
 		if (!stextflag) {
 			chrflag = FALSE;
+			stashflag = FALSE;
 			if (!questlog) {
 				StartQuestlog();
 			} else {
@@ -703,6 +712,7 @@ void PressChar(int vkey)
 	case 's':
 		if (!stextflag) {
 			invflag = 0;
+			stashflag = FALSE;
 			if (!spselflag) {
 				DoSpeedBook();
 			} else {
@@ -715,7 +725,23 @@ void PressChar(int vkey)
 	case 'b':
 		if (!stextflag) {
 			invflag = 0;
+			stashflag = FALSE;
 			sbookflag = !sbookflag;
+		}
+		return;
+	case 'N':
+	case 'n':
+		if (!stextflag) {
+			ToggleStash();
+			if (stashflag) {
+				if (MouseX > 160 && MouseY < PANEL_TOP) {
+					_SetCursorPos(MouseX - 160, MouseY);
+				}
+			} else if (!invflag) {
+				if (MouseX < 480 && MouseY < PANEL_TOP) {
+					_SetCursorPos(MouseX + 160, MouseY);
+				}
+			}
 		}
 		return;
 	case '+':
@@ -1001,6 +1027,7 @@ void LoadGameLevel(BOOL firstflag, int lvldir)
 
 	if (firstflag) {
 		InitInv();
+		InitStash();
 		InitItemGFX();
 		InitQuestText();
 

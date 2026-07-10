@@ -177,7 +177,7 @@ void CheckCursMove()
 	sx = MouseX;
 	sy = MouseY;
 
-	if (chrflag || questlog) {
+	if (chrflag || questlog || stashflag) {
 		if (sx >= 160) {
 			sx -= 160;
 		} else {
@@ -258,6 +258,7 @@ void CheckCursMove()
 		drawsbarflag = TRUE;
 	}
 	pcursinvitem = -1;
+	pcursstashitem = -1;
 	pcursplr = -1;
 	uitemflag = FALSE;
 	panelflag = FALSE;
@@ -282,10 +283,14 @@ void CheckCursMove()
 		pcursinvitem = CheckInvHLight();
 		return;
 	}
+	if (stashflag && MouseX < 320) {
+		pcursstashitem = CheckStashHLight();
+		return;
+	}
 	if (sbookflag && MouseX > 320) {
 		return;
 	}
-	if ((chrflag || questlog) && MouseX < 320) {
+	if ((chrflag || questlog || stashflag) && MouseX < 320) {
 		return;
 	}
 

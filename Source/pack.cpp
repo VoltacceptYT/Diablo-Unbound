@@ -69,6 +69,20 @@ void PackPlayer(PkPlayerStruct *pPack, int pnum, BOOL manashield)
 		pi++;
 	}
 
+	pki = pPack->StashList;
+	pi = pPlayer->StashList;
+
+	for (i = 0; i < NUM_STASH_GRID_ELEM; i++) {
+		PackItem(pki, pi);
+		pki++;
+		pi++;
+	}
+
+	for (i = 0; i < NUM_STASH_GRID_ELEM; i++)
+		pPack->StashGrid[i] = pPlayer->StashGrid[i];
+
+	pPack->_pNumStash = pPlayer->_pNumStash;
+
 	pPack->pDiabloKillLevel = pPlayer->pDiabloKillLevel;
 
 	if (gbMaxPlayers == 1 || manashield)
@@ -204,6 +218,20 @@ void UnPackPlayer(PkPlayerStruct *pPack, int pnum, BOOL killok)
 		pki++;
 		pi++;
 	}
+
+	pki = pPack->StashList;
+	pi = pPlayer->StashList;
+
+	for (i = 0; i < NUM_STASH_GRID_ELEM; i++) {
+		UnPackItem(pki, pi);
+		pki++;
+		pi++;
+	}
+
+	for (i = 0; i < NUM_STASH_GRID_ELEM; i++)
+		pPlayer->StashGrid[i] = pPack->StashGrid[i];
+
+	pPlayer->_pNumStash = pPack->_pNumStash;
 
 	if (pnum == myplr) {
 		for (i = 0; i < 20; i++)
