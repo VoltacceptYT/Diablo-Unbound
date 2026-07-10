@@ -50,6 +50,12 @@ int pcursstashitem = -1;
 #define STASH_GOLD_BTN_Y (STASH_PANEL_Y + 8)
 #define STASH_GOLD_BTN_WIDTH 288
 #define STASH_GOLD_BTN_HEIGHT 32
+// Width reserved for the coin icon on the left of the button - the gold
+// amount text is centered in the remaining space to its right, not the
+// whole button, so it doesn't overlap/crowd the icon.
+#define STASH_GOLD_ICON_WIDTH 40
+// Vertical baseline for the gold amount text, centered in the button.
+#define STASH_GOLD_TEXT_Y (STASH_GOLD_BTN_Y + ((STASH_GOLD_BTN_HEIGHT / 2) * 1.5))
 
 /* buffer-space offsets used when calling the CEL draw primitives, which
  * expect coordinates relative to the render buffer's top-left corner and
@@ -122,8 +128,8 @@ void DrawStash()
 
 	sprintf(tempstr, "%i gold", plr[myplr]._pStashGold);
 	ADD_PlrStringXY(
-	    STASH_GOLD_BTN_X + 40,
-	    STASH_GOLD_BTN_Y + 20,
+	    STASH_GOLD_BTN_X + STASH_GOLD_ICON_WIDTH,
+	    STASH_GOLD_TEXT_Y,
 	    STASH_GOLD_BTN_X + STASH_GOLD_BTN_WIDTH,
 	    tempstr,
 	    COL_GOLD);
@@ -463,22 +469,13 @@ void StashStartGoldWithdraw()
 
 void CheckStashItem()
 {
-	int gx, gy;
-
 	if (pcurs >= CURSOR_FIRSTITEM) {
+		// Gold never occupies a grid slot anymore - it always goes straight
+		// into the bank no matter where in the stash panel it's dropped,
+		// rather than only when it lands squarely on the header button.
 		if (plr[myplr].HoldItem._itype == ITYPE_GOLD) {
-			// CheckStashPaste tests slot occupancy using the cursor's
-			// center (mouse position offset by half the held item's
-			// width/height), not the raw mouse position - match that
-			// here or a click that visually lands on the header can
-			// still fall through and get placed in a grid slot instead.
-			SetICursor(plr[myplr].HoldItem._iCurs + CURSOR_FIRSTITEM);
-			gx = MouseX + (icursW >> 1);
-			gy = MouseY + (icursH >> 1);
-			if (CheckStashGoldButton(gx, gy)) {
-				StashDepositGold(myplr);
-				return;
-			}
+			StashDepositGold(myplr);
+			return;
 		}
 		CheckStashPaste(myplr, MouseX, MouseY);
 	} else {
