@@ -4,7 +4,6 @@
 #include "ui/event.h"
 #include "storm/storm.h"
 #include "trace.h"
-#include "stash.h"   // already included via diablo.h, but kept for clarity
 
 HWND ghMainWnd;
 int glMid1Seed[NUMLEVELS];
@@ -120,7 +119,6 @@ void free_game()
 	FreeGMenu();
 	FreeQuestText();
 	FreeStoreMem();
-	FreeStashGFX();   // <-- ADDED
 
 	for (i = 0; i < MAX_PLRS; i++)
 		FreePlayerGFX(i);
@@ -198,12 +196,6 @@ BOOL PressEscKey()
 		rv = TRUE;
 	}
 
-	// *** ADDED: close stash when ESC is pressed ***
-	if (stashflag) {
-		stashflag = FALSE;
-		rv = TRUE;
-	}
-
 	return rv;
 }
 
@@ -219,10 +211,6 @@ BOOL LeftMouseDown(BOOL bShift)
 				SetSpell();
 			} else if (stextflag) {
 				CheckStoreBtn();
-			} else if (stashflag) {   // <-- ADDED block
-				CheckStashButtonPress();
-				CheckStashItem(MouseX, MouseY);
-				return FALSE;
 			} else if (MouseY < PANEL_TOP) {
 				if (!gmenu_exception() && !TryIconCurs()) {
 					if (questlog && MouseX > 32 && MouseX < 288 && MouseY > 32 && MouseY < 308) {
@@ -379,8 +367,6 @@ void LeftMouseUp()
 		ReleaseLvlBtn();
 	if (stextflag)
 		ReleaseStoreBtn();
-	if (stashflag)        // <-- ADDED
-		CheckStashButtonRelease();
 }
 
 void RightMouseDown()
@@ -389,10 +375,7 @@ void RightMouseDown()
 		if (doomflag) {
 			doom_close();
 		} else if (!stextflag) {
-			if (stashflag) {   // <-- ADDED block
-				CheckStashCut(MouseX, MouseY);
-				return;
-			} else if (spselflag) {
+			if (spselflag) {
 				SetSpell();
 			} else if (MouseY >= PANEL_TOP
 			    || (!sbookflag || MouseX <= 320)
@@ -493,7 +476,6 @@ void PressKey(int vkey)
 			invflag = 0;
 			chrflag = FALSE;
 			sbookflag = FALSE;
-			stashflag = FALSE;
 			spselflag = 0;
 			if (qtextflag && leveltype == DTYPE_TOWN) {
 				qtextflag = FALSE;
@@ -645,13 +627,6 @@ void PressChar(int vkey)
 	if (gmenu_exception() || control_talk_last_key(vkey) || sgnTimeoutCurs != 0 || deathflag) {
 		return;
 	}
-
-	// *** ADDED: handle gold withdraw input ***
-	if (isWithdrawGoldOpen) {
-		WithdrawGoldKeyPress(vkey);
-		return;
-	}
-
 	if ((char)vkey == 'p' || (char)vkey == 'P') {
 		diablo_pause_game();
 		return;
@@ -743,11 +718,6 @@ void PressChar(int vkey)
 			sbookflag = !sbookflag;
 		}
 		return;
-	// *** REMOVED: case 'T' toggling stash ***
-	// case 'T':
-	// case 't':
-	//    ... removed ...
-
 	case '+':
 	case '=':
 		if (automapflag) {
@@ -845,6 +815,16 @@ void PressChar(int vkey)
 			SetAllSpellsCheat();
 		}
 		return;
+	case '[':
+		if (currlevel == 0 && debug_mode_key_w) {
+			TakeGoldCheat();
+		}
+		return;
+	case ']':
+		if (currlevel == 0 && debug_mode_key_w) {
+			MaxSpellsCheat();
+		}
+		return;
 	case 'a':
 		if (debug_mode_key_inverted_v) {
 			spelldata[SPL_TELEPORT].sTownSpell = 1;
@@ -883,6 +863,15 @@ void PressChar(int vkey)
 		NetSendCmdString(1 << myplr, tempstr);
 		sprintf(tempstr, "End = %i", glEndSeed[currlevel]);
 		NetSendCmdString(1 << myplr, tempstr);
+		return;
+	case 'T':
+	case 't':
+		if (debug_mode_key_inverted_v) {
+			sprintf(tempstr, "PX = %i  PY = %i", plr[myplr].WorldX, plr[myplr].WorldY);
+			NetSendCmdString(1 << myplr, tempstr);
+			sprintf(tempstr, "CX = %i  CY = %i  DP = %i", cursmx, cursmy, dungeon[cursmx][cursmy]);
+			NetSendCmdString(1 << myplr, tempstr);
+		}
 		return;
 	case '|':
 		if (currlevel == 0 && debug_mode_key_w) {
@@ -1012,7 +1001,6 @@ void LoadGameLevel(BOOL firstflag, int lvldir)
 
 	if (firstflag) {
 		InitInv();
-		InitStash();   // <-- ADDED
 		InitItemGFX();
 		InitQuestText();
 

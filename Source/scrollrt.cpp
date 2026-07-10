@@ -385,9 +385,7 @@ void DrawView(int StartX, int StartY) {
 
   DrawDurIcon();
 
-  if (stashflag) {
-    DrawStash();
-  } else if (chrflag) {
+  if (chrflag) {
     DrawChr();
   } else if (questlog) {
     DrawQuestLog();
@@ -441,7 +439,7 @@ void DrawGame(int x, int y) {
   chunks = 10;
   blocks = 8;
 
-  if (chrflag || questlog || stashflag) {
+  if (chrflag || questlog) {
     x += 2;
     y -= 2;
     sx += 288;
